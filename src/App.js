@@ -1,23 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { ToastProvider } from './contexts/ToastContext';
 
 // Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import Subscriptions from './pages/Subscriptions';
-import Analytics from './pages/Analytics';
-import Settings from './pages/Settings';
-
-// Components
-import Header from './components/Header';
+import DashboardPro from './pages/DashboardPro';
+import { PageLoading } from './components/UI';
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div className="spinner"></div>;
+    return <PageLoading />;
   }
 
   return isAuthenticated ? children : <Navigate to="/login" />;
@@ -27,7 +23,7 @@ const PublicRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div className="spinner"></div>;
+    return <PageLoading />;
   }
 
   return !isAuthenticated ? children : <Navigate to="/dashboard" />;
@@ -38,8 +34,6 @@ function AppContent() {
 
   return (
     <div className="app">
-      {isAuthenticated && <Header />}
-      
       <Routes>
         <Route
           path="/login"
@@ -61,31 +55,7 @@ function AppContent() {
           path="/dashboard"
           element={
             <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/subscriptions"
-          element={
-            <PrivateRoute>
-              <Subscriptions />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <PrivateRoute>
-              <Analytics />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <PrivateRoute>
-              <Settings />
+              <DashboardPro />
             </PrivateRoute>
           }
         />
@@ -102,7 +72,9 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppContent />
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
       </AuthProvider>
     </Router>
   );
