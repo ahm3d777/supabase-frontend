@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSubscriptions, getAnalyticsOverview } from '../utils/api';
-import { useToast } from '../contexts/ToastContext';
+import { useToast } from '../components/Toast';
 import { Loading, EmptyState, Button, StatCard, Card, Badge } from '../components/UI';
 import { formatCurrency, formatRelativeTime, daysUntilRenewal, getUrgencyLevel, categoryConfig } from '../utils/theme';
 
