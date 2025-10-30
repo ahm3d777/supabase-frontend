@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getSubscriptions, getAnalyticsOverview } from '../utils/api';
-import { useToast } from './Toast';
+import { useToast } from '../contexts/ToastContext';
 import './Dashboard.css';
 
 const Dashboard = () => {

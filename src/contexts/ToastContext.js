@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import '../components/Toast.css';
 
 const ToastContext = createContext();
 
 export const useToast = () => {
   const context = useContext(ToastContext);
   if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
+    throw new Error('useToast must be used within ToastProvider');
   }
   return context;
 };
@@ -13,31 +14,33 @@ export const useToast = () => {
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
-  const showToast = useCallback((message, type = 'info') => {
+  const showToast = useCallback((message, type = 'info', duration = 3000) => {
     const id = Date.now();
     setToasts(prev => [...prev, { id, message, type }]);
+    
     setTimeout(() => {
       setToasts(prev => prev.filter(toast => toast.id !== id));
-    }, 3000);
+    }, duration);
   }, []);
 
+  const success = useCallback((message) => showToast(message, 'success'), [showToast]);
+  const error = useCallback((message) => showToast(message, 'error'), [showToast]);
+  const warning = useCallback((message) => showToast(message, 'warning'), [showToast]);
+  const info = useCallback((message) => showToast(message, 'info'), [showToast]);
+
   return (
-    <ToastContext.Provider value={{ showToast }}>
+    <ToastContext.Provider value={{ success, error, warning, info }}>
       {children}
-      <div style={{ position: 'fixed', top: 20, right: 20, zIndex: 9999 }}>
+      <div className="toast-container">
         {toasts.map(toast => (
-          <div
-            key={toast.id}
-            style={{
-              padding: '12px 20px',
-              marginBottom: '10px',
-              borderRadius: '4px',
-              backgroundColor: toast.type === 'error' ? '#f44336' : '#4caf50',
-              color: 'white',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
-            }}
-          >
-            {toast.message}
+          <div key={toast.id} className={`toast toast-${toast.type}`}>
+            <div className="toast-icon">
+              {toast.type === 'success' && '✓'}
+              {toast.type === 'error' && '✕'}
+              {toast.type === 'warning' && '⚠'}
+              {toast.type === 'info' && 'ℹ'}
+            </div>
+            <div className="toast-message">{toast.message}</div>
           </div>
         ))}
       </div>
